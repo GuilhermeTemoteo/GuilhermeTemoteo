@@ -1,0 +1,42 @@
+-- Este código foi feito por Guilherme Temoteo.
+----------------------------------------------------------------------------------
+-- O divisor de clock funciona a partir da equação Fout=Fin/n, onde Fout é a frequência de
+-- saída desejada para o projeto, Fin é a frequência de clock fornecida pela placa basys 3, 
+-- que possui um clock de 100MHz. N é um número inteiro que satifaça 
+-- a igualdade da equacão.
+-- Para usar este código você deve saber que o periodo é 1/F, com frequência em Hz e que
+-- esse periodo será dado em segundos.
+-- Então por exemplo. Seu projeto na basys 3 requer um clock de 0,5 segundo, seu Fout será = 1/T
+-- ou seja, 1/0,5 = 2Hz. Para descobrir n basta dividir 100MHz por 2Hz.
+----------------------------------------------------------------------------------
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity divisor_de_clk is
+    Port ( Fin : in STD_LOGIC;
+             k : in integer;
+           rst : in STD_LOGIC;
+           Fout : out STD_LOGIC);
+end divisor_de_clk;
+
+architecture Behavioral of divisor_de_clk is
+signal n : integer := 0;
+begin
+    process (Fin, rst)
+    begin
+        if rst = '1' then
+            n <= 0;
+        else
+            if rising_edge (Fin) then
+                if n = (k - 1) then 
+                    n <= 0;
+                    Fout <= '1';
+                else
+                    n <= n + 1;
+                    Fout <= '0';
+                end if;
+            end if;
+        end if;   
+    end process;
+end Behavioral;
